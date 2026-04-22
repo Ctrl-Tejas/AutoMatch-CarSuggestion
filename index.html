@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoMatch India | Find Your Perfect Used Car</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+</head>
+<body>
+
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape circle-1"></div>
+    <div class="bg-shape circle-2"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cars.html">Car Database</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+                        <a href="survey.html" class="btn btn-primary px-4 rounded-pill" style="background-color: var(--primary-color); border: none;">Take the Survey</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Global Theme Script -->
+    <script src="assets/js/theme.js"></script>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center px-3" style="margin-top: 80px;">
+        <div class="container fade-in-up">
+            <img src="assets/images/logo.svg" alt="AutoMatch Logo" style="width: 140px; height: 140px; object-fit: contain; margin-bottom: 30px; border-radius: 30px; box-shadow: 0 10px 30px -5px rgba(0,0,0,0.6); background-color: #222831; padding: 10px; border: 3px solid var(--primary-color);">
+            
+            <h1 class="display-3 fw-bold mb-4" style="color: var(--light-color);">Find Your <span style="color: var(--primary-color);">Perfect Drive</span></h1>
+            <p class="lead mb-5 mx-auto" style="max-width: 700px; color: var(--light-color); opacity: 0.85;">
+                Navigating the Indian used car market shouldn't be stressful. Let our intelligent AI recommendation engine analyze your lifestyle, budget, and priorities to mathematically match you with the absolute best car.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="survey.html" class="btn btn-lg px-5 py-3 fw-bold shadow-lg" style="background-color: var(--primary-color); color: white; border-radius: 16px;">Start the Survey Now</a>
+                <a href="cars.html" class="btn btn-lg px-5 py-3 fw-bold btn-outline-custom shadow" style="border-radius: 16px;">Browse All Cars</a>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Features Section -->
+    <section class="py-5 position-relative z-1" style="background-color: var(--dark-bg); margin-top: 2rem;">
+        <div class="container py-5">
+            <div class="text-center mb-5 fade-in-up">
+                <h2 class="display-5 fw-bold" style="color: var(--light-color);">How It Works</h2>
+                <p class="lead opacity-75" style="color: var(--light-color);">Your absolute perfect car match, calculated in exactly three steps.</p>
+            </div>
+            
+            <div class="process-wrapper">
+                <div class="row g-4 position-relative">
+                    <div class="col-md-4 fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="step-card">
+                            <div class="step-number">1</div>
+                            <h4 class="fw-bold mb-3" style="color: var(--light-color);">Tell Us Your Needs</h4>
+                            <p class="mb-0 opacity-75" style="color: var(--light-color);">Take a brief 7-point diagnostic outlining your daily usage, budget constraints, and what truly matters to you on the road.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="step-card active-step" style="border-color: var(--primary-color); transform: scale(1.05); z-index: 5;">
+                            <div class="step-number" style="background: white; color: var(--primary-color);">2</div>
+                            <h4 class="fw-bold mb-3" style="color: var(--light-color);">AI Analysis</h4>
+                            <p class="mb-0 opacity-75" style="color: var(--light-color);">Our algorithm dynamically cross-references your exact profile matrix securely against our vast, curated Indian automotive engine database.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-in-up" style="animation-delay: 0.5s;">
+                        <div class="step-card">
+                            <div class="step-number">3</div>
+                            <h4 class="fw-bold mb-3" style="color: var(--light-color);">Your Match</h4>
+                            <p class="mb-0 opacity-75" style="color: var(--light-color);">Receive a highly accurate, ranked list of vehicles tailored strictly for you with deep explanations on precisely why they fit your lifestyle.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+                <p class="opacity-50 small">Advanced Used Car Recommendation System</p>
+            </div>
+            
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="index.html" class="footer-link fw-bold">Home</a>
+                <a href="survey.html" class="footer-link fw-bold">Take Survey</a>
+                <a href="cars.html" class="footer-link fw-bold">Database</a>
+                <a href="admin.html" class="footer-link fw-bold">Admin Login</a>
+            </div>
+            <div class="pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="small opacity-50 mb-0">&copy; 2026 AutoMatch India. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Analysis | AutoMatch India</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <style>
+        .specs-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .car-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .car-image {
+            width: 100%;
+            height: 350px;
+            object-fit: contain;
+            background: white;
+            border-bottom: 5px solid rgba(0, 0, 0, 0.05);
+        }
+        .spec-item {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .spec-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamic Background -->
+    <div class="bg-shape circle-1 print-hide"></div>
+    <div class="bg-shape circle-2 print-hide"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top print-hide">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cars.html">Car Database</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0"><a href="survey.html" class="btn btn-primary px-4 rounded-pill" style="background-color: var(--primary-color); border: none;">Take the Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/carData.js"></script>
+    
+    <div class="container py-5 position-relative z-1 min-vh-100" style="padding-top: 100px !important;">
+        
+        <div class="mb-4 fade-in-up">
+            <a href="cars.html" class="btn btn-outline-light rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i> Back to Database
+            </a>
+        </div>
+
+        <div class="specs-card fade-in-up" style="animation-delay: 0.2s;">
+            <div id="carHero">
+                <!-- Header and Image injected here -->
+            </div>
+            
+            <div class="card-body p-4 p-md-5" style="background-color: transparent;">
+                <div class="row g-5">
+                    <div class="col-lg-8">
+                        <div id="carContent">
+                            <!-- Dynamic Content -->
+                        </div>
+                    </div>
+        
+                    <!-- EMI Calculator Sidebar -->
+                    <div class="col-lg-4">
+                        <div class="glass-card p-4 sticky-top" style="top: 100px;">
+                            <h4 class="fw-bold mb-4" style="color: var(--primary-color);">EMI Calculator</h4>
+                            <div class="mb-4">
+                                <label class="form-label small opacity-75">Loan Amount (₹)</label>
+                                <input type="range" class="form-range" id="loanAmount" min="100000" max="2000000" step="50000" value="500000">
+                                <div class="d-flex justify-content-between">
+                                    <span id="loanVal" class="fw-bold text-primary">₹5,00,000</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small opacity-75">Interest Rate (%)</label>
+                                <input type="range" class="form-range" id="interestRate" min="7" max="15" step="0.5" value="9.5">
+                                <div class="d-flex justify-content-between">
+                                    <span id="interestVal" class="fw-bold text-primary">9.5%</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small opacity-75">Tenure (Years)</label>
+                                <input type="range" class="form-range" id="tenure" min="1" max="7" step="1" value="5">
+                                <div class="d-flex justify-content-between">
+                                    <span id="tenureVal" class="fw-bold text-primary">5 Years</span>
+                                </div>
+                            </div>
+                            <div class="p-3 rounded-3 text-center mb-4" style="background: rgba(0, 173, 181, 0.1); border: 1px dashed var(--primary-color);">
+                                <p class="mb-0 small opacity-75">Estimated Monthly EMI</p>
+                                <h2 class="fw-bold mb-0" style="color: var(--primary-color);" id="emiResult">₹10,500</h2>
+                            </div>
+                            
+                            <div class="d-flex gap-2 mb-3">
+                                <button class="btn btn-primary flex-grow-1 rounded-pill py-2">Get Financing</button>
+                                <button class="btn btn-outline-light rounded-circle p-2" onclick="shareCar()" data-bs-toggle="tooltip" title="Share Analysis">
+                                    <i class="bi bi-share"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center w-100 mt-5 py-5">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+            </div>
+            <p class="opacity-50 small">&copy; 2026 AutoMatch India. Advanced Automotive Recommendation Platform.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const carName = params.get('car');
+            const hero = document.getElementById('carHero');
+            const content = document.getElementById('carContent');
+
+            if (!carName || !carDetailsData[carName]) {
+                hero.innerHTML = `<div class="car-header"><h1>Car Not Found</h1></div>`;
+                return;
+            }
+
+            const details = carDetailsData[carName];
+            document.title = `${carName} - Full Analysis | AutoMatch`;
+
+            // Hero
+            hero.innerHTML = `
+                <div class="car-header">
+                    <h1 class="display-4 fw-bold mb-2">${carName}</h1>
+                    <p class="lead mb-0 opacity-75">${details.tags.join(' • ')}</p>
+                </div>
+                <img src="assets/images/${details.image}" class="car-image" alt="${carName}">
+            `;
+
+            // Content
+            content.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div>
+                        <h2 class="fw-bold mb-1">${carName}</h2>
+                        <h3 class="text-primary fw-bold mb-0">${details.price}</h3>
+                    </div>
+                    <div class="text-end">
+                        <div class="badge bg-success px-3 py-2 rounded-pill shadow-sm mb-2">Verified Specs</div>
+                        <p class="small opacity-50 mb-0">Updated Apr 2026</p>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-4" style="color: var(--primary-color);"><i class="bi bi-cpu me-2"></i>Technical Specifications</h5>
+                <div class="spec-grid mb-5">
+                    <div class="spec-item" data-bs-toggle="tooltip" title="Engine displacement and cylinder configuration">
+                        <span class="d-block small opacity-50">Engine <i class="bi bi-info-circle ms-1 x-small"></i></span>
+                        <span class="fw-bold">${details.engine}</span>
+                    </div>
+                    <div class="spec-item" data-bs-toggle="tooltip" title="Maximum horsepower output">
+                        <span class="d-block small opacity-50">Power <i class="bi bi-info-circle ms-1 x-small"></i></span>
+                        <span class="fw-bold">${details.hhp}</span>
+                    </div>
+                    <div class="spec-item" data-bs-toggle="tooltip" title="Turning force produced by the engine">
+                        <span class="d-block small opacity-50">Max Torque <i class="bi bi-info-circle ms-1 x-small"></i></span>
+                        <span class="fw-bold">${details.torque || 'N/A'}</span>
+                    </div>
+                    <div class="spec-item" data-bs-toggle="tooltip" title="Certified fuel efficiency / Range">
+                        <span class="d-block small opacity-50">Efficiency <i class="bi bi-info-circle ms-1 x-small"></i></span>
+                        <span class="fw-bold">${details.mileage}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="d-block small opacity-50">Fuel Tank</span>
+                        <span class="fw-bold">${details.fuelTank || 'N/A'}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="d-block small opacity-50">Boot Space</span>
+                        <span class="fw-bold">${details.bootSpace || 'N/A'}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="d-block small opacity-50">Ground Clearance</span>
+                        <span class="fw-bold">${details.groundClearance || 'N/A'}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="d-block small opacity-50">Seating</span>
+                        <span class="fw-bold">${details.seating || '5 Seater'}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="d-block small opacity-50">Transmission</span>
+                        <span class="fw-bold">${details.transmission}</span>
+                    </div>
+                    <div class="spec-item" data-bs-toggle="tooltip" title="Crash safety test rating">
+                        <span class="d-block small opacity-50">Safety <i class="bi bi-info-circle ms-1 x-small"></i></span>
+                        <span class="fw-bold text-success">${details.safetyRating}</span>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-4" style="color: var(--primary-color);"><i class="bi bi-star me-2"></i>Premium Features</h5>
+                <div class="d-flex flex-wrap gap-2 mb-5">
+                    ${details.features.map(f => `<span class="feature-badge" style="display: inline-block; background: rgba(0, 173, 181, 0.1); color: var(--primary-color); border: 1px solid rgba(0, 173, 181, 0.3); padding: 8px 16px; border-radius: 30px; font-size: 0.9rem; font-weight: 500;">${f}</span>`).join('')}
+                </div>
+
+                <div class="glass-card p-4 rounded-4 mb-5" style="border-left: 5px solid var(--primary-color);">
+                    <h5 class="fw-bold mb-3 text-white">Expert Verdict</h5>
+                    <p class="mb-0 opacity-75">Based on our advanced matching algorithm, the <strong>${carName}</strong> is a top-tier choice for users prioritizing ${details.tags.join(', ')}. Its ${details.safetyRating} safety rating and ${details.mileage} efficiency make it a highly competitive option in its segment.</p>
+                </div>
+
+                <h5 class="fw-bold mb-4">Recommended Alternatives</h5>
+                <div class="row g-3" id="similarCars">
+                    <!-- Similar Cars -->
+                </div>
+            `;
+
+            // Similar Cars
+            const similarContainer = document.getElementById('similarCars');
+            const carType = details.tags[0]; 
+            const similar = Object.entries(carDetailsData)
+                .filter(([name, data]) => data.tags.includes(carType) && name !== carName)
+                .slice(0, 3);
+
+            similar.forEach(([name, data]) => {
+                similarContainer.innerHTML += `
+                    <div class="col-4">
+                        <div class="glass-card p-3 text-center h-100" style="cursor: pointer;" onclick="window.location.href='car-details.html?car=${encodeURIComponent(name)}'">
+                            <img src="assets/images/${data.image}" class="img-fluid rounded mb-2" style="height: 60px; object-fit: contain;">
+                            <p class="small fw-bold mb-1 text-truncate">${name}</p>
+                            <p class="x-small opacity-50 mb-0">${data.price.split(' ')[0]}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Init EMI
+            initEMI();
+
+            // Init Tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        });
+
+        function initEMI() {
+            const loan = document.getElementById('loanAmount');
+            const interest = document.getElementById('interestRate');
+            const tenure = document.getElementById('tenure');
+            
+            const updateEMI = () => {
+                const P = parseFloat(loan.value);
+                const r = parseFloat(interest.value) / 12 / 100;
+                const n = parseFloat(tenure.value) * 12;
+                const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+                
+                document.getElementById('loanVal').innerText = `₹${P.toLocaleString('en-IN')}`;
+                document.getElementById('interestVal').innerText = `${interest.value}%`;
+                document.getElementById('tenureVal').innerText = `${tenure.value} Years`;
+                document.getElementById('emiResult').innerText = `₹${Math.round(emi).toLocaleString('en-IN')}`;
+            };
+
+            [loan, interest, tenure].forEach(el => el.addEventListener('input', updateEMI));
+            updateEMI();
+        }
+
+        function shareCar() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    text: `Check out the ${document.title} on AutoMatch India!`,
+                    url: window.location.href,
+                }).catch(e => console.log(e));
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copied to clipboard!");
+            }
+        }
+    </script>
+</body>
+</html>

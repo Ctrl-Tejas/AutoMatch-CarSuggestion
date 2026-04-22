@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Cars - AutoMatch India</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/carData.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        .compare-table {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .compare-table th {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--primary-color);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--glass-border);
+        }
+        .compare-table td {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+        .spec-label {
+            text-align: left !important;
+            font-weight: 700;
+            background: rgba(0, 173, 181, 0.05);
+            width: 200px;
+        }
+        .car-thumb {
+            width: 100%;
+            max-width: 150px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape circle-1"></div>
+    <div class="bg-shape circle-2"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                <a href="cars.html" class="btn btn-outline-light btn-sm rounded-pill px-3">Back to Database</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5 mt-5 position-relative z-1">
+        <div class="text-center mb-5 fade-in-up">
+            <h1 class="display-4 fw-bold">Car Comparison</h1>
+            <p class="opacity-75">Analyzing specifications side-by-side</p>
+        </div>
+
+        <div class="table-responsive fade-in-up" style="animation-delay: 0.2s;">
+            <table class="table table-borderless compare-table text-white" id="compareTable">
+                <thead>
+                    <tr id="tableHeader">
+                        <th class="spec-label">Features</th>
+                        <!-- Dynamic Columns -->
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dynamic Rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="emptyState" class="text-center py-5" style="display: none;">
+            <h3>No cars selected for comparison</h3>
+            <p>Go back to the database or results and select at least 2 cars.</p>
+            <a href="cars.html" class="btn btn-primary mt-3">Browse Cars</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const selectedCars = JSON.parse(localStorage.getItem("compareList") || "[]");
+            const header = document.getElementById("tableHeader");
+            const body = document.getElementById("tableBody");
+            const emptyState = document.getElementById("emptyState");
+
+            if (selectedCars.length === 0) {
+                document.querySelector(".table-responsive").style.display = "none";
+                emptyState.style.display = "block";
+                return;
+            }
+
+            // Populate Header
+            selectedCars.forEach(carName => {
+                const car = carDetailsData[carName];
+                const th = document.createElement("th");
+                th.innerHTML = `
+                    <img src="assets/images/${car.image}" class="car-thumb shadow-sm">
+                    <div class="mt-2">${carName}</div>
+                    <button class="btn btn-sm btn-outline-danger mt-2 py-0" onclick="removeCar('${carName}')">×</button>
+                `;
+                header.appendChild(th);
+            });
+
+            // Populate Specs
+            const specs = [
+                { label: "Price Range", key: "price" },
+                { label: "Engine", key: "engine" },
+                { label: "Power", key: "hhp" },
+                { label: "Torque", key: "torque" },
+                { label: "Mileage/Range", key: "mileage" },
+                { label: "Ground Clearance", key: "groundClearance" },
+                { label: "Fuel Tank", key: "fuelTank" },
+                { label: "Boot Space", key: "bootSpace" },
+                { label: "Seating", key: "seating" },
+                { label: "Safety Rating", key: "safetyRating" }
+            ];
+
+            specs.forEach(spec => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td class="spec-label">${spec.label}</td>`;
+                selectedCars.forEach(carName => {
+                    const value = carDetailsData[carName][spec.key];
+                    tr.innerHTML += `<td>${value}</td>`;
+                });
+                body.appendChild(tr);
+            });
+
+            gsap.from(".compare-table tr", {
+                opacity: 0,
+                x: -20,
+                stagger: 0.1,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        });
+
+        function removeCar(name) {
+            let selectedCars = JSON.parse(localStorage.getItem("compareList") || "[]");
+            selectedCars = selectedCars.filter(c => c !== name);
+            localStorage.setItem("compareList", JSON.stringify(selectedCars));
+            location.reload();
+        }
+    </script>
+</body>
+</html>

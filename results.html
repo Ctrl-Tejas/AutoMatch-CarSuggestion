@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Recommendations - Used Car Survey</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <style>
+        .result-card {
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            background: var(--glass-bg);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary-light);
+        }
+
+        .match-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
+            font-size: 1.1rem;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover .car-image {
+            transform: scale(1.05);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.15));
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        .reason-item {
+            display: flex;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .reason-item i {
+            color: var(--success-color);
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape circle-1 print-hide"></div>
+    <div class="bg-shape circle-2 print-hide"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top print-hide">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cars.html">Car Database</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0"><a href="survey.html" class="btn btn-primary px-4 rounded-pill" style="background-color: var(--primary-color); border: none;">Take the Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/carData.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <div class="container py-5 position-relative z-1 min-vh-100 d-flex flex-column" style="padding-top: 100px !important;">
+        
+        <div class="text-center mb-5 fade-in-up">
+            <img src="assets/images/logo.svg" alt="AutoMatch Logo" style="width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; border-radius: 20px; box-shadow: 0 5px 15px -3px rgba(0,0,0,0.5); background-color: #222831; padding: 5px; border: 2px solid rgba(0, 173, 181, 0.5);">
+            <h1 class="display-4 fw-bold mb-2" style="color: var(--light-color);">Your Perfect Matches</h1>
+            <p class="lead" style="color: var(--light-color); opacity: 0.8;">Based on your survey responses, we have found the best cars for you.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center" id="resultsContainer">
+            <!-- Results will be injected here via JS -->
+            <div class="col-12 text-center text-white" id="initialLoading">
+                <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4 class="mt-3">Analyzing data...</h4>
+            </div>
+        </div>
+
+        <div class="text-center mt-auto pt-5 fade-in-up print-hide" id="actionButtons" style="display: none; animation-delay: 0.5s;">
+            <button onclick="window.print()" class="btn px-4 py-2 me-3 shadow-sm" style="background-color: var(--primary-color); color: white;"><i class="bi bi-printer me-2"></i> Save as PDF / Print</button>
+            <a href="survey.html" class="btn btn-outline-custom px-4 py-2 shadow-sm">Retake Survey</a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center w-100 mt-5 py-5 print-hide">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+            </div>
+            <p class="opacity-50 small">&copy; 2026 AutoMatch India. Advanced Automotive Recommendation Platform.</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById("resultsContainer");
+            const rawData = localStorage.getItem("carRecommendations");
+            const actionButtons = document.getElementById("actionButtons");
+
+            if (!rawData) {
+                container.innerHTML = `
+                    <div class="col-md-8 mx-auto text-center glass-card p-5">
+                        <h3 class="fw-bold mb-3">No data found</h3>
+                        <p class="text-muted">Please take the survey first to get recommendations.</p>
+                        <a href="survey.html" class="btn btn-primary mt-3">Go to Survey</a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const results = JSON.parse(rawData);
+                container.innerHTML = ""; // Clear loading
+
+                if (results.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-md-8 mx-auto text-center glass-card p-5 fade-in-up">
+                            <h3 class="fw-bold mb-3">No exact matches found</h3>
+                            <p class="text-muted">Try adjusting your preferences in the survey.</p>
+                        </div>
+                    `;
+                } else {
+                    // Celebration!
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#00ADB5', '#EEEEEE', '#393E46']
+                    });
+
+                    results.forEach((car, index) => {
+                        const delay = index * 0.15;
+                        const carData = carDetailsData[car.name] || { image: "default.png" };
+                        
+                        const reasonsHtml = car.reasons.map(r => `
+                            <div class="reason-item">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>${r}</span>
+                            </div>
+                        `).join("");
+
+                        const cardHTML = `
+                            <div class="col-md-6 col-lg-4 fade-in-up" style="animation-delay: ${delay}s">
+                                <div class="result-card">
+                                    <div style="overflow: hidden; position: relative; height: 200px; background: white;">
+                                        <img src="assets/images/${carData.image}" class="car-image h-100 w-100" style="object-fit: contain;" alt="${car.name}">
+                                        <span class="match-badge">${car.match_percentage}% Match</span>
+                                    </div>
+                                    <div class="card-header-custom">
+                                        <h3 class="fw-bold m-0" style="color: var(--light-color); font-size: 1.3rem;">${car.name}</h3>
+                                    </div>
+                                    <div class="card-body p-4 flex-grow-1">
+                                        <h5 class="fw-bold mb-3 text-muted" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Key Strengths</h5>
+                                        ${reasonsHtml}
+                                    </div>
+                                    <div class="card-footer bg-transparent border-0 p-4 pt-0 mt-auto">
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary flex-grow-1" onclick="window.location.href='car-details.html?car=${encodeURIComponent(car.name)}'">Analysis</button>
+                                            <button class="btn btn-outline-light" onclick="window.location.href='compare.html'">Compare</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += cardHTML;
+                    });
+                }
+                
+                actionButtons.style.display = "block";
+
+            } catch (err) {
+                container.innerHTML = `<div class="alert alert-danger">Error rendering results.</div>`;
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>

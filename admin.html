@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Used Car Survey</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <style>
+        .dashboard-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            height: 100%;
+            color: var(--light-color);
+        }
+        .table-responsive {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        .table {
+            margin-bottom: 0;
+            color: var(--light-color) !important;
+        }
+        .table th {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 15px;
+            border-bottom: 1px solid var(--glass-border) !important;
+        }
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            background: transparent !important;
+            color: var(--light-color) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .table-hover tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        
+        /* Auth Overlay */
+        #authOverlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--dark-color);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Authentication Overlay -->
+    <div id="authOverlay">
+        <div class="dashboard-card shadow-lg" style="width: 100%; max-width: 400px; background: var(--dark-color); border: 1px solid var(--primary-color);">
+            <div class="text-center mb-4">
+                <img src="assets/images/logo.svg" alt="AutoMatch Logo" width="60" style="border-radius: 12px; margin-bottom: 15px;">
+                <h4 style="color: var(--light-color);">Admin Portal</h4>
+            </div>
+            <div id="loginError" class="alert alert-danger" style="display: none; padding: 10px; font-size: 0.9em;">Invalid credentials!</div>
+            <div class="mb-3">
+                <input type="text" id="adminUser" class="form-control text-center" placeholder="Username" style="border-radius: 10px;">
+            </div>
+            <div class="mb-4">
+                <input type="password" id="adminPass" class="form-control text-center" placeholder="Password" style="border-radius: 10px;" onkeypress="if(event.key === 'Enter') checkLogin()">
+            </div>
+            <button onclick="checkLogin()" class="btn w-100" style="background-color: var(--primary-color); color: white; border-radius: 10px; font-weight: bold;">Login</button>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top print-hide mt-0">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cars.html">Car Database</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0"><a href="survey.html" class="btn btn-primary px-4 rounded-pill" style="background-color: var(--primary-color); border: none;">Take the Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/js/theme.js"></script>
+    <div style="padding-top: 100px;"></div>
+
+    <div class="container-fluid px-4 pb-5">
+        
+        <div class="row g-4 mb-4">
+            <!-- Summary Stats -->
+            <div class="col-md-4">
+                <div class="dashboard-card bg-gradient text-white" style="background: linear-gradient(135deg, #4f46e5, #818cf8);">
+                    <h5 class="opacity-75">Total Submissions</h5>
+                    <h1 class="display-4 fw-bold" id="totalCount">...</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- Charts -->
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5 class="fw-bold mb-4">Budget Distribution</h5>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h5 class="fw-bold mb-4">Fuel Preference</h5>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="fuelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0">Recent Submissions</h5>
+                <button class="btn btn-sm btn-primary" onclick="fetchAnalytics()">Refresh Data</button>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Budget</th>
+                            <th>Fuel Type</th>
+                            <th>Car Type</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Loading data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center w-100 mt-5 print-hide">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+            </div>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="index.html" class="footer-link fw-bold">Home</a>
+                <a href="survey.html" class="footer-link fw-bold">Take Survey</a>
+                <a href="cars.html" class="footer-link fw-bold">Database</a>
+                <a href="admin.html" class="footer-link fw-bold">Admin Login</a>
+            </div>
+            <div class="pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="small opacity-50 mb-0">&copy; 2026 AutoMatch India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        function checkLogin() {
+            const u = document.getElementById("adminUser").value;
+            const p = document.getElementById("adminPass").value;
+            if(u === "admin" && p === "admin123") {
+                document.getElementById("authOverlay").style.display = "none";
+            } else {
+                document.getElementById("loginError").style.display = "block";
+            }
+        }
+    </script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>

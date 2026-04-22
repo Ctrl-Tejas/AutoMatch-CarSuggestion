@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Database - AutoMatch India</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+    <style>
+        .result-card {
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            background: var(--glass-bg);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .result-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary-light);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: white;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover .car-image {
+            transform: scale(1.05);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.15));
+            padding: 15px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .badge-type {
+            background-color: var(--primary-light);
+            color: var(--light-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape circle-1"></div>
+    <div class="bg-shape circle-2"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="cars.html">Car Database</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0"><a href="survey.html" class="btn btn-primary px-4 rounded-pill" style="background-color: var(--primary-color); border: none;">Take the Survey</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/carData.js"></script>
+    
+    <div class="container py-5 position-relative z-1 min-vh-100 d-flex flex-column" style="padding-top: 100px !important;">
+        
+        <div class="text-center mb-5 fade-in-up">
+            <h1 class="display-4 fw-bold mb-2" style="color: var(--light-color);">Browse All Cars</h1>
+            <p class="lead" style="color: var(--light-color); opacity: 0.8;">Explore our entire curated dataset of top-rated used vehicles.</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="row mb-4 fade-in-up" style="animation-delay: 0.1s;">
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label small opacity-75">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Model, brand..." style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white;">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small opacity-75">Body Type</label>
+                            <select class="form-select" id="typeFilter" style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white;">
+                                <option value="">All Types</option>
+                                <option value="Hatchback">Hatchback</option>
+                                <option value="Sedan">Sedan</option>
+                                <option value="SUV">SUV</option>
+                                <option value="MUV">MUV</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small opacity-75">Max Budget: <span id="budgetLabel" class="fw-bold text-primary">₹30 Lakh</span></label>
+                            <input type="range" class="form-range" id="budgetSlider" min="3" max="30" step="1" value="30">
+                            <div class="d-flex justify-content-between small opacity-50">
+                                <span>₹3L</span>
+                                <span>₹30L</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small opacity-75">Fuel</label>
+                            <select class="form-select" id="fuelFilter" style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white;">
+                                <option value="">All Fuels</option>
+                                <option value="Petrol">Petrol</option>
+                                <option value="Diesel">Diesel</option>
+                                <option value="Electric">Electric</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="resetFilters()">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 justify-content-center" id="carsContainer">
+            <!-- Cards injected via JS -->
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center w-100 mt-5 print-hide">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+            </div>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="index.html" class="footer-link fw-bold">Home</a>
+                <a href="survey.html" class="footer-link fw-bold">Take Survey</a>
+                <a href="cars.html" class="footer-link fw-bold">Database</a>
+                <a href="admin.html" class="footer-link fw-bold">Admin Login</a>
+            </div>
+            <div class="pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="small opacity-50 mb-0">&copy; 2026 AutoMatch India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const container = document.getElementById("carsContainer");
+        const searchInput = document.getElementById("searchInput");
+        const typeFilter = document.getElementById("typeFilter");
+        const fuelFilter = document.getElementById("fuelFilter");
+
+        const budgetSlider = document.getElementById("budgetSlider");
+        const budgetLabel = document.getElementById("budgetLabel");
+        const quickViewModal = new bootstrap.Modal(document.getElementById('quickViewModal'));
+        const quickViewBody = document.getElementById('quickViewBody');
+
+        function renderCars() {
+            const filterText = searchInput.value.toLowerCase();
+            const filterType = typeFilter.value;
+            const filterFuel = fuelFilter.value;
+            const maxBudget = parseInt(budgetSlider.value);
+
+            budgetLabel.innerText = `₹${maxBudget} Lakh`;
+
+            container.innerHTML = "";
+            let delay = 0;
+            
+            const compareList = JSON.parse(localStorage.getItem("compareList") || "[]");
+
+            for (const [carName, details] of Object.entries(carDetailsData)) {
+                
+                // Parse price for budget filtering (e.g., "₹3.99 - 5.96 Lakh" -> 3.99)
+                const minPrice = parseFloat(details.price.replace(/[^\d.]/g, ''));
+
+                // Advanced filtering
+                if (filterText && !carName.toLowerCase().includes(filterText)) continue;
+                if (filterType && !details.tags.includes(filterType)) continue;
+                if (filterFuel && !details.tags.includes(filterFuel) && !details.tags.some(t => t.includes(filterFuel))) continue;
+                if (minPrice > maxBudget) continue;
+
+                const tagsHtml = details.tags.map(t => `<span class="badge-type">${t}</span>`).join("");
+                const isCompared = compareList.includes(carName);
+
+                const cardHTML = `
+                    <div class="col-md-6 col-lg-4 fade-in-up" style="animation-delay: ${delay}s">
+                        <div class="result-card">
+                            <div style="overflow: hidden; position: relative; height: 180px;">
+                                <img src="assets/images/${details.image}" class="car-image h-100" alt="${carName}">
+                                <div class="position-absolute top-0 end-0 p-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input compare-check" type="checkbox" value="${carName}" id="comp_${carName.replace(/\s+/g, '')}" ${isCompared ? 'checked' : ''} onchange="handleCompareChange(this)">
+                                        <label class="form-check-label text-white small" for="comp_${carName.replace(/\s+/g, '')}">Compare</label>
+                                    </div>
+                                </div>
+                                <div class="quick-view-btn" onclick="showQuickView('${carName}')">
+                                    <i class="bi bi-eye"></i> Quick View
+                                </div>
+                            </div>
+                            <div class="card-header-custom">
+                                <h3 class="fw-bold m-0" style="color: var(--light-color); font-size: 1.25rem;">${carName}</h3>
+                                <p class="mb-0 mt-2 text-white opacity-75 small">${details.price}</p>
+                            </div>
+                            <div class="card-body p-3 flex-grow-1">
+                                <div class="mb-3 d-flex flex-wrap gap-1">
+                                    ${tagsHtml}
+                                </div>
+                                <div class="row g-0 small opacity-75">
+                                    <div class="col-6 mb-1"><i class="bi bi-gear me-1"></i> ${details.engine.split(',')[0]}</div>
+                                    <div class="col-6 mb-1"><i class="bi bi-speedometer2 me-1"></i> ${details.mileage.split(' ')[0]}</div>
+                                    <div class="col-6"><i class="bi bi-shield-check me-1"></i> ${details.safetyRating.split(' ')[0]}</div>
+                                    <div class="col-6"><i class="bi bi-people me-1"></i> ${details.seating}</div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 p-3 pt-0">
+                                <button class="btn btn-sm w-100" style="border: 2px solid var(--primary-color); color: var(--light-color); font-weight: 500;"
+                                        onmouseover="this.style.backgroundColor='var(--primary-color)'; this.style.color='white'" 
+                                        onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--light-color)'" 
+                                        onclick="window.location.href='car-details.html?car=${encodeURIComponent(carName)}'">
+                                    Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+                delay += 0.05;
+            }
+
+            if(container.innerHTML === "") {
+                container.innerHTML = `<div class="col-12 text-center text-white p-5"><h5>No cars found matching your criteria.</h5></div>`;
+            }
+        }
+
+        function showQuickView(carName) {
+            const car = carDetailsData[carName];
+            quickViewBody.innerHTML = `
+                <div class="row align-items-center">
+                    <div class="col-md-5 mb-4 mb-md-0">
+                        <img src="assets/images/${car.image}" class="img-fluid rounded-4 shadow-lg" alt="${carName}">
+                    </div>
+                    <div class="col-md-7">
+                        <h2 class="fw-bold mb-1">${carName}</h2>
+                        <h4 class="text-primary mb-4">${car.price}</h4>
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <p class="small opacity-50 mb-0">Engine</p>
+                                <p class="fw-bold mb-0">${car.engine}</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="small opacity-50 mb-0">Mileage</p>
+                                <p class="fw-bold mb-0">${car.mileage}</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="small opacity-50 mb-0">Safety</p>
+                                <p class="fw-bold mb-0">${car.safetyRating}</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="small opacity-50 mb-0">Seating</p>
+                                <p class="fw-bold mb-0">${car.seating}</p>
+                            </div>
+                        </div>
+                        <h6 class="fw-bold mb-3">Key Features</h6>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            ${car.features.map(f => `<span class="badge bg-secondary opacity-75 rounded-pill px-3">${f}</span>`).join('')}
+                        </div>
+                        <button class="btn btn-primary w-100 py-3 rounded-pill" onclick="window.location.href='car-details.html?car=${encodeURIComponent(carName)}'">
+                            View Full Analysis
+                        </button>
+                    </div>
+                </div>
+            `;
+            quickViewModal.show();
+        }
+
+        function handleCompareChange(checkbox) {
+            toggleCompare(checkbox.value);
+        }
+
+        function resetFilters() {
+            searchInput.value = "";
+            typeFilter.value = "";
+            fuelFilter.value = "";
+            budgetSlider.value = 30;
+            renderCars();
+        }
+
+        // Back to Top & Scroll Progress
+        const backToTop = document.getElementById('backToTop');
+        const scrollProgress = document.getElementById('scrollProgress');
+        const progressValue = document.getElementById('progressValue');
+
+        window.onscroll = () => {
+            const pos = document.documentElement.scrollTop;
+            const calcHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollValue = Math.round((pos * 100) / calcHeight);
+
+            if (pos > 100) {
+                backToTop.style.display = 'flex';
+                backToTop.style.alignItems = 'center';
+                backToTop.style.justifyContent = 'center';
+            } else {
+                backToTop.style.display = 'none';
+            }
+
+            scrollProgress.style.display = pos > 100 ? 'block' : 'none';
+            progressValue.style.height = `${scrollValue}%`;
+        };
+
+        backToTop.onclick = () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        // Initial render
+        renderCars();
+
+        // Listen for filter changes
+        [searchInput, typeFilter, fuelFilter, budgetSlider].forEach(el => {
+            el.addEventListener("input", renderCars);
+        });
+
+    </script>
+</body>
+</html>

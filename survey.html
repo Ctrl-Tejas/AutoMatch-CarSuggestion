@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Used Car Recommendation Survey System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+</head>
+<body>
+
+    <!-- Animated Background Shapes -->
+    <div class="bg-shape circle-1"></div>
+    <div class="bg-shape circle-2"></div>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.svg" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2" style="border-radius: 8px;">
+                AutoMatch
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="cars.html">Car Database</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center" href="compare.html">
+                            Compare <span class="badge bg-primary ms-1" id="compareCounter">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <script src="assets/js/theme.js"></script>
+
+    <div class="container min-vh-100 d-flex flex-column justify-content-center align-items-center py-5 position-relative z-1" style="padding-top: 100px !important;">
+
+        <div class="card glass-card survey-card shadow-lg p-0 w-100" style="max-width: 750px; overflow: hidden;">
+            
+            <!-- Progress Bar & Live Match -->
+            <div class="d-flex align-items-center justify-content-between px-4 py-2 bg-dark text-white border-bottom">
+                <div class="small fw-bold opacity-75">Step <span id="currentStepNum">1</span> of 7</div>
+                <div class="small fw-bold text-primary" id="liveMatchCounter" style="display: none;">Potential Matches: <span id="matchCount">15</span></div>
+            </div>
+            <div class="progress" style="height: 6px; border-radius: 0;">
+                <div class="progress-bar bg-gradient-primary" id="survey-progress" role="progressbar" style="width: 14.28%;" aria-valuenow="14.28" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+
+            <div class="card-body p-4 p-md-5">
+                <form id="carSurveyForm">
+                    
+                    <!-- SECTION 1: Personal Details -->
+                    <div class="survey-section active" id="section-1">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">1. Personal Details</h4>
+                        
+                        <div class="mb-3 form-floating custom-floating">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required>
+                            <label for="name">Full Name *</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Age Group *</label>
+                            <select class="form-select" name="age_group" id="age_group" required>
+                                <option value="" selected disabled>Select your age group</option>
+                                <option value="18-25">18-25</option>
+                                <option value="26-35">26-35</option>
+                                <option value="36-50">36-50</option>
+                                <option value="50+">50+</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3 form-floating custom-floating">
+                            <input type="text" class="form-control" id="city" name="city" placeholder="Mumbai" required>
+                            <label for="city">City *</label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3 form-floating custom-floating">
+                                <input type="text" class="form-control" id="occupation" name="occupation" placeholder="Software Engineer">
+                                <label for="occupation">Occupation</label>
+                            </div>
+                            <div class="col-md-6 mb-3 form-floating custom-floating">
+                                <input type="number" class="form-control" id="family_size" name="family_size" placeholder="4" min="1">
+                                <label for="family_size">Family Size</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: Motivation -->
+                    <div class="survey-section" id="section-2">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">2. Motivation for Buying</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Why are you buying a car? (Select all that apply) *</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="checkbox" class="btn-check" name="buying_reason" id="first_car" value="First car">
+                                <label class="btn btn-outline-custom" for="first_car">First car</label>
+
+                                <input type="checkbox" class="btn-check" name="buying_reason" id="upgrade" value="Upgrade">
+                                <label class="btn btn-outline-custom" for="upgrade">Upgrade</label>
+
+                                <input type="checkbox" class="btn-check" name="buying_reason" id="family_need" value="Family need">
+                                <label class="btn btn-outline-custom" for="family_need">Family need</label>
+
+                                <input type="checkbox" class="btn-check" name="buying_reason" id="business_use" value="Business use">
+                                <label class="btn btn-outline-custom" for="business_use">Business use</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">What matters most to you? (Select all that apply) *</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="checkbox" class="btn-check" name="priority" id="comfort_priority" value="Comfort">
+                                <label class="btn btn-outline-custom" for="comfort_priority">Comfort</label>
+
+                                <input type="checkbox" class="btn-check" name="priority" id="budget_priority" value="Budget">
+                                <label class="btn btn-outline-custom" for="budget_priority">Budget</label>
+
+                                <input type="checkbox" class="btn-check" name="priority" id="performance_priority" value="Performance">
+                                <label class="btn btn-outline-custom" for="performance_priority">Performance</label>
+
+                                <input type="checkbox" class="btn-check" name="priority" id="status_priority" value="Status">
+                                <label class="btn btn-outline-custom" for="status_priority">Status</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 3: Usage Pattern -->
+                    <div class="survey-section" id="section-3">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">3. Usage Pattern</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Primary usage *</label>
+                            <select class="form-select form-select-lg" name="usage_type" required>
+                                <option value="" selected disabled>Select primary usage</option>
+                                <option value="Daily commute">Daily commute</option>
+                                <option value="Long drives">Long drives</option>
+                                <option value="Mixed">Mixed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Driving area *</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="radio" class="btn-check" name="driving_area" id="area_city" value="City" required>
+                                <label class="btn btn-outline-custom" for="area_city">City</label>
+
+                                <input type="radio" class="btn-check" name="driving_area" id="area_highway" value="Highway">
+                                <label class="btn btn-outline-custom" for="area_highway">Highway</label>
+
+                                <input type="radio" class="btn-check" name="driving_area" id="area_both" value="Both">
+                                <label class="btn btn-outline-custom" for="area_both">Both</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Average monthly distance</label>
+                            <select class="form-select" name="distance">
+                                <option value="" selected disabled>Select average distance</option>
+                                <option value="<500 km">< 500 km</option>
+                                <option value="500-1000 km">500-1000 km</option>
+                                <option value="1000+ km">1000+ km</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 4: Vehicle Preferences -->
+                    <div class="survey-section" id="section-4">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">4. Vehicle Preferences</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Preferred car type *</label>
+                            <div class="row g-2 custom-check-cards">
+                                <div class="col-4">
+                                    <input type="radio" name="car_type" id="type_hatchback" value="Hatchback" class="d-none" required>
+                                    <label class="image-radio-btn" for="type_hatchback">
+                                        <span class="icon">🚗</span>
+                                        <span>Hatchback</span>
+                                    </label>
+                                </div>
+                                <div class="col-4">
+                                    <input type="radio" name="car_type" id="type_sedan" value="Sedan" class="d-none">
+                                    <label class="image-radio-btn" for="type_sedan">
+                                        <span class="icon">🚙</span>
+                                        <span>Sedan</span>
+                                    </label>
+                                </div>
+                                <div class="col-4">
+                                    <input type="radio" name="car_type" id="type_suv" value="SUV" class="d-none">
+                                    <label class="image-radio-btn" for="type_suv">
+                                        <span class="icon">🚙🚐 </span>
+                                        <span>SUV</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Fuel preference *</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="radio" class="btn-check" name="fuel_type" id="fuel_petrol" value="Petrol" required>
+                                <label class="btn btn-outline-custom" for="fuel_petrol">Petrol</label>
+
+                                <input type="radio" class="btn-check" name="fuel_type" id="fuel_diesel" value="Diesel">
+                                <label class="btn btn-outline-custom" for="fuel_diesel">Diesel</label>
+                                
+                                <input type="radio" class="btn-check" name="fuel_type" id="fuel_cng" value="CNG">
+                                <label class="btn btn-outline-custom" for="fuel_cng">CNG</label>
+
+                                <input type="radio" class="btn-check" name="fuel_type" id="fuel_electric" value="Electric">
+                                <label class="btn btn-outline-custom" for="fuel_electric">Electric</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted fw-bold small">Transmission</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="radio" class="btn-check" name="transmission" id="trans_manual" value="Manual">
+                                <label class="btn btn-outline-custom" for="trans_manual">Manual</label>
+
+                                <input type="radio" class="btn-check" name="transmission" id="trans_auto" value="Automatic">
+                                <label class="btn btn-outline-custom" for="trans_auto">Automatic</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: Budget -->
+                    <div class="survey-section" id="section-5">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">5. Budget Constraints</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Budget range *</label>
+                            <div class="d-flex flex-column gap-2 radio-group vertical">
+                                <input type="radio" class="btn-check" name="budget" id="budget_5" value="Under 5 lakh" required>
+                                <label class="btn btn-outline-custom text-start px-4 py-3" for="budget_5">💰 Under 5 lakh</label>
+
+                                <input type="radio" class="btn-check" name="budget" id="budget_10" value="5-10 lakh">
+                                <label class="btn btn-outline-custom text-start px-4 py-3" for="budget_10">💰💰 5-10 lakh</label>
+
+                                <input type="radio" class="btn-check" name="budget" id="budget_15" value="10-15 lakh">
+                                <label class="btn btn-outline-custom text-start px-4 py-3" for="budget_15">💰💰💰 10-15 lakh</label>
+
+                                <input type="radio" class="btn-check" name="budget" id="budget_15plus" value="15+ lakh">
+                                <label class="btn btn-outline-custom text-start px-4 py-3" for="budget_15plus">💎 15+ lakh</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-4">
+                            <label class="form-label text-muted fw-bold small">Willing to consider used cars?</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="radio" class="btn-check" name="used_car_interest" id="used_yes" value="Yes" checked>
+                                <label class="btn btn-outline-custom" for="used_yes">Yes</label>
+
+                                <input type="radio" class="btn-check" name="used_car_interest" id="used_no" value="No">
+                                <label class="btn btn-outline-custom" for="used_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 6: Features Importance -->
+                    <div class="survey-section" id="section-6">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">6. Features Importance</h4>
+                        <p class="text-muted small mb-4">Rate 1 (Low) to 5 (High) importance</p>
+                        
+                        <div class="mb-4">
+                            <label class="form-label d-flex justify-content-between">
+                                <span class="fw-bold">Mileage Importance *</span>
+                                <span class="badge bg-primary rounded-pill" id="val_mileage">3</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" name="mileage" id="mileage" min="1" max="5" value="3" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label d-flex justify-content-between">
+                                <span class="fw-bold">Safety features *</span>
+                                <span class="badge bg-primary rounded-pill" id="val_safety">3</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" name="safety" id="safety" min="1" max="5" value="3" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label d-flex justify-content-between">
+                                <span class="fw-bold">Technology (touchscreen, sensors) *</span>
+                                <span class="badge bg-primary rounded-pill" id="val_tech">3</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" name="tech" id="tech" min="1" max="5" value="3" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-flex justify-content-between">
+                                <span class="fw-bold">Comfort features *</span>
+                                <span class="badge bg-primary rounded-pill" id="val_comfort">3</span>
+                            </label>
+                            <input type="range" class="form-range custom-range" name="comfort" id="comfort" min="1" max="5" value="3" required>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 7: Feedback -->
+                    <div class="survey-section" id="section-7">
+                        <h4 class="mb-4 fw-semibold border-bottom pb-2">7. Final Thoughts</h4>
+                        
+                        <div class="mb-4">
+                            <label class="form-label text-muted fw-bold small">Would you consider EV vehicles? *</label>
+                            <div class="d-flex flex-wrap gap-2 radio-group">
+                                <input type="radio" class="btn-check" name="ev_interest" id="ev_yes" value="Yes" required>
+                                <label class="btn btn-outline-custom" for="ev_yes">Yes</label>
+
+                                <input type="radio" class="btn-check" name="ev_interest" id="ev_no" value="No">
+                                <label class="btn btn-outline-custom" for="ev_no">No</label>
+
+                                <input type="radio" class="btn-check" name="ev_interest" id="ev_maybe" value="Maybe">
+                                <label class="btn btn-outline-custom" for="ev_maybe">Maybe</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-floating custom-floating">
+                            <textarea class="form-control" placeholder="Specific model?" id="additional_preferences" name="additional_preferences" style="height: 80px"></textarea>
+                            <label for="additional_preferences">Any additional preferences</label>
+                        </div>
+
+                        <div class="mb-3 form-floating custom-floating">
+                            <textarea class="form-control" placeholder="Comments..." id="feedback" name="feedback" style="height: 100px"></textarea>
+                            <label for="feedback">Comments or feedback</label>
+                        </div>
+                    </div>
+
+                    <!-- Buttons Navigation -->
+                    <div class="d-flex justify-content-between mt-5 pt-3 border-top">
+                        <button type="button" class="btn btn-light px-4 py-2 fw-semibold" id="prevBtn" style="display: none;">
+                            <i class="me-2">&larr;</i> Previous
+                        </button>
+                        <button type="button" class="btn btn-primary bg-gradient-primary border-0 px-5 py-2 fw-semibold ms-auto shadow" id="nextBtn">
+                            Next <i class="ms-2">&rarr;</i>
+                        </button>
+                        <button type="submit" class="btn btn-success bg-gradient-success border-0 px-5 py-2 fw-semibold ms-auto shadow" id="submitBtn" style="display: none;">
+                            Find My Car 🚗
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Spinner Overlay -->
+    <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white" style="z-index: 9999; display: none; opacity: 0.9;">
+        <div class="d-flex flex-column justify-content-center align-items-center h-100 fade-in-up">
+            <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3 class="mt-4 fw-bold text-dark">Analyzing perfectly matched cars...</h3>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="custom-footer position-relative z-1 text-center w-100 mt-5">
+        <div class="container">
+            <div class="mb-4">
+                <img src="assets/images/logo.svg" alt="Logo" width="50" height="50" style="border-radius: 10px;">
+                <h4 class="fw-bold mt-3">AutoMatch India</h4>
+            </div>
+            <div class="d-flex justify-content-center gap-4 mb-4">
+                <a href="index.html" class="footer-link fw-bold">Home</a>
+                <a href="survey.html" class="footer-link fw-bold">Take Survey</a>
+                <a href="cars.html" class="footer-link fw-bold">Database</a>
+                <a href="admin.html" class="footer-link fw-bold">Admin Login</a>
+            </div>
+            <div class="pt-3" style="border-top: 1px solid rgba(255,255,255,0.1);">
+                <p class="small opacity-50 mb-0">&copy; 2026 AutoMatch India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
